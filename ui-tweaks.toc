@@ -1,0 +1,14 @@
+## Interface: 80200
+## Title: Phenix UI Tweaks
+## Author: Hilario Fernandes
+## Version: 0.1
+
+ui/nameplates.lua
+ui/minimap.lua
+ui/buffs.lua
+ui/tooltip.lua
+ui/bossframes.lua
+ui/playerframe.lua
+ui/targetframe.lua
+
+ui/otherframes.lua
