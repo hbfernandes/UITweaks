@@ -11,6 +11,7 @@ local function HookTalkingHead()
         TalkingHeadFrame:SetPoint("CENTER", "UIParent", 0, -400)
     end
 
+    --TalkingHeadFrame:HookScript("OnShow", moveHeadFrame)
     TalkingHeadFrame:HookScript("OnShow", hideHeadFrame)
 end
 
@@ -28,3 +29,11 @@ if UIWidgetTopCenterContainerFrame then
     UIWidgetTopCenterContainerFrame:SetPoint(pnt, relTo, relPnt, x, y - 12)
 end
 
+-- -- Zone ability button
+-- if ZoneAbilityFrame then
+--     local pnt, relTo, relPnt, x, y = ZoneAbilityFrame:GetPoint()
+--     ZoneAbilityFrame:ClearAllPoints()
+--     ZoneAbilityFrame:SetPoint("CENTER", relTo, "CENTER", 300, -40)
+--     ZoneAbilityFrame:SetMovable(true)
+--     ZoneAbilityFrame:SetUserPlaced(true)
+-- end

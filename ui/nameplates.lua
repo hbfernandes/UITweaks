@@ -1,14 +1,3 @@
--- nameplate settings
--- this assumes using large nameplates
-SetCVar("nameplateMotion", 1)
-SetCVar("nameplateOverlapV", 0.5)
-SetCVar("nameplateSelectedScale", 1)
-SetCVar("nameplateMinScale", 1)
-SetCVar("nameplateOtherTopInset", -1)
-SetCVar("nameplateOtherBottomInset", 0)
-SetCVar("nameplateMinAlpha", 0.8)
-SetCVar("nameplateGlobalScale", 0.85)
-
 -- nameplate font sizes
 local npFontFamily = SystemFont_LargeNamePlateFixed
 local fontName, _, _ = npFontFamily:GetFont()
@@ -28,7 +17,7 @@ if DefaultCompactNamePlateFrameSetupInternal then
                 frame.health.text = frame.health.text or frame.health:CreateFontString(nil, "OVERLAY")
                 frame.health.text:SetAllPoints(true)
                 frame.health:SetFrameStrata("HIGH")
-                frame.health:SetPoint("CENTER", frame.healthBar)
+                frame.health:SetPoint("CENTER", frame.healthBar, 0, -1)
                 frame.health.text:SetVertexColor(1, 1, 1)
 
                 -- If 'Larger Nameplates' option is enabled.

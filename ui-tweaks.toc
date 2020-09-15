@@ -12,3 +12,5 @@ ui/playerframe.lua
 ui/targetframe.lua
 
 ui/otherframes.lua
+
+ui/config.lua

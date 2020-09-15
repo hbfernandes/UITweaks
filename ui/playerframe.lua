@@ -37,3 +37,7 @@ if PlayerFrame then
     PlayerFrame:HookScript("OnEvent", updatePlayerMarker)
 end
 
+if MageArcaneChargesFrame then
+    MageArcaneChargesFrame:Hide()
+    MageArcaneChargesFrame:HookScript("OnShow",function(self) self:Hide() end)
+end
