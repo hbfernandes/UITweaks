@@ -3,7 +3,7 @@
 
 -- position it
 if BuffFrame then
-    local buffsY = -30
+    local buffsY = -30 -- -20 on shadowlands
     hooksecurefunc(BuffFrame, "SetPoint", function(self, pnt, relTo, relPnt, x, y)
         if y ~= buffsY then
             self:ClearAllPoints()

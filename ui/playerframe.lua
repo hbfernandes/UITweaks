@@ -2,9 +2,12 @@
 
 if PlayerFrame then
     -- Set position
-    PlayerFrame:ClearAllPoints()
-    PlayerFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 405, -582)
-    PlayerFrame:SetUserPlaced(true)
+    if not TargetFrame:IsUserPlaced() then
+        PlayerFrame:ClearAllPoints()
+        PlayerFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 405, -582)
+        TargetFrame:SetClampedToScreen(true)
+        PlayerFrame:SetUserPlaced(true)
+    end
 
     -- Stop showing heals/dmg on player frame
     PlayerFrame:UnregisterEvent("UNIT_COMBAT")
