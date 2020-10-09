@@ -165,16 +165,24 @@ end
 if DefaultCompactNamePlateFrameSetupInternal then
     hooksecurefunc("DefaultCompactNamePlateFrameSetupInternal", createPercentHPFrame)
     hooksecurefunc("DefaultCompactNamePlateFrameSetupInternal", createDispellableFrame)
+else
+    print("Missing 'DefaultCompactNamePlateFrameSetupInternal' to hook on!")
 end
 
 if CompactUnitFrame_UpdateHealth then
     hooksecurefunc("CompactUnitFrame_UpdateHealth", updateHPPercent)
+else
+    print("Missing 'CompactUnitFrame_UpdateHealth' to hook on!")
 end
 
 if CompactUnitFrame_UpdateAuras then
     hooksecurefunc("CompactUnitFrame_UpdateAuras", updateDispellableBuffs)
+else
+    print("Missing 'CompactUnitFrame_UpdateAuras' to hook on!")
 end
 
 if CompactUnitFrame_UpdateName then
     hooksecurefunc("CompactUnitFrame_UpdateName", updateDispellableFramePosition)
+else
+    print("Missing 'CompactUnitFrame_UpdateName' to hook on!")
 end

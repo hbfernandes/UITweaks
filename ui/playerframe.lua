@@ -13,7 +13,15 @@ if PlayerFrame then
     PlayerFrame:UnregisterEvent("UNIT_COMBAT")
 
     -- Display raid marker on frame
-    PlayerFrame:RegisterEvent("RAID_TARGET_UPDATE")
+    local function updatePlayerMarker(self, event, ...)
+        local index = GetRaidTargetIndex("player")
+        if (index) then
+            self.texture:SetTexture("13700" .. index)
+            self:Show()
+        else
+            self:Hide()
+        end
+    end
 
     local playerMarkFrame = CreateFrame("Frame", nil, PlayerFrame)
     playerMarkFrame:SetFrameStrata("MEDIUM") -- PlayerFrame is LOW, set MEDIUM to display above
@@ -25,19 +33,30 @@ if PlayerFrame then
     markTexture:SetAllPoints(playerMarkFrame)
     playerMarkFrame.texture = markTexture
 
-    PlayerFrame.markFrame = playerMarkFrame
+    playerMarkFrame:RegisterEvent("RAID_TARGET_UPDATE")  
+    playerMarkFrame:HookScript("OnEvent", updatePlayerMarker)
 
-    local function updatePlayerMarker(self, event, ...)
-        local index = GetRaidTargetIndex(self.unit)
-        if (index) then
-            self.markFrame.texture:SetTexture("13700" .. index)
-            self.markFrame:Show()
-        else
-            self.markFrame:Hide()
+    -- Displaye XP percentage on playerframe
+    if UnitLevel("player") ~= GetMaxPlayerLevel() then 
+        local function updateXP(self)       
+            self.text:SetText(math.floor((UnitXP("player")*100)/UnitXPMax("player")) .. "%")
         end
-    end
 
-    PlayerFrame:HookScript("OnEvent", updatePlayerMarker)
+        local xpframe = CreateFrame("Frame", nil, PlayerFrame)
+        xpframe:SetWidth(40)
+        xpframe:SetHeight(40)
+        xpframe:SetPoint("RIGHT", PlayerFrame, "BOTTOMLEFT", 49, 33)
+
+        xpframe.text = xpframe:CreateFontString(nil, "OVERLAY")
+        xpframe.text:SetAllPoints(true)
+        xpframe.text:SetVertexColor(1, 1, 1)
+        xpframe.text:SetFont("FONTS\\FRIZQT__.TTF", 10, "OUTLINE")
+    
+        xpframe:Show()
+        xpframe:RegisterEvent("PLAYER_XP_UPDATE")
+        xpframe:RegisterEvent("PLAYER_ENTERING_WORLD")
+        xpframe:HookScript("OnEvent", updateXP)
+    end 
 end
 
 if MageArcaneChargesFrame then
