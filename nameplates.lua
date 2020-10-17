@@ -1,8 +1,7 @@
 -- Nameplate font sizes
-local npFontFamily = SystemFont_LargeNamePlateFixed
-local fontName, _, _ = npFontFamily:GetFont()
-
-npFontFamily:SetFont(fontName, 14, "NONE")
+-- https://www.townlong-yak.com/framexml/live/SharedFontStyles.xml
+-- https://www.townlong-yak.com/framexml/live/FontStyles.xml
+SystemFont_LargeNamePlateFixed:SetFontObject(GameFontNormalMed1)
 
 -- Display health percentage on healthbar
 
@@ -15,16 +14,8 @@ local function createPercentHPFrame(nameplate)
     nameplate.healthPercent:SetAllPoints(nameplate.healthBar)
     nameplate.healthPercent:SetFrameStrata("HIGH")
 
-    nameplate.healthPercent.text = nameplate.healthPercent:CreateFontString(nil, "OVERLAY")
-    nameplate.healthPercent.text:SetAllPoints(true)
-    nameplate.healthPercent.text:SetVertexColor(1, 1, 1)
-
-    -- If 'Larger Nameplates' option is enabled.
-    if InterfaceOptionsNamesPanelUnitNameplatesMakeLarger:GetValue() == "1" then 
-        nameplate.healthPercent.text:SetFont("FONTS\\FRIZQT__.TTF", 10, "OUTLINE")
-    else
-        nameplate.healthPercent.text:SetFont("FONTS\\FRIZQT__.TTF", 8, "OUTLINE")
-    end                
+    nameplate.healthPercent.text = nameplate.healthPercent:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
+    nameplate.healthPercent.text:SetAllPoints(true)    
 end
 
 local function updateHPPercent(nameplate)
@@ -88,8 +79,8 @@ local function updateDispellableBuffs(nameplate)
     -- Check the new AuraUtil.ForEachAura comin in shadowlands
 
     while shownBuffsIndex <= maxShownBuffs do
-        -- name, icon, count, buffType, duration, expirationTime, _, stealable = UnitDebuff(nameplate.displayedUnit, index, nil)
-        name, icon, count, buffType, duration, expirationTime, _, stealable = UnitBuff(nameplate.displayedUnit, index, nil)
+        name, icon, count, buffType, duration, expirationTime, _, stealable = UnitDebuff(nameplate.displayedUnit, index, nil)
+        -- name, icon, count, buffType, duration, expirationTime, _, stealable = UnitBuff(nameplate.displayedUnit, index, nil)
         
         if name then
             -- print(name, buffType, stealable)

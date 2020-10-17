@@ -34,26 +34,22 @@ if PlayerFrame then
     markFrame:RegisterEvent("RAID_TARGET_UPDATE")  
     markFrame:HookScript("OnEvent", updatePlayerMarker)
 
-    -- Displaye XP percentage on playerframe
-    if UnitLevel("player") ~= GetMaxPlayerLevel() then 
-        local function updateXP(self)       
-            self.text:SetText(math.floor((UnitXP("player")*100)/UnitXPMax("player")) .. "%")
-        end
-
+    -- Display XP percentage on playerframe
+    if UnitLevel("player") ~= GetMaxLevelForPlayerExpansion() then 
         local xpframe = CreateFrame("Frame", nil, PlayerFrame)
         xpframe:SetWidth(40)
         xpframe:SetHeight(40)
         xpframe:SetPoint("RIGHT", PlayerFrame, "BOTTOMLEFT", 49, 33)
 
-        xpframe.text = xpframe:CreateFontString(nil, "OVERLAY")
+        xpframe.text = xpframe:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
         xpframe.text:SetAllPoints(true)
-        xpframe.text:SetVertexColor(1, 1, 1)
-        xpframe.text:SetFont("FONTS\\FRIZQT__.TTF", 10, "OUTLINE")
-    
+      
         xpframe:Show()
         xpframe:RegisterEvent("PLAYER_XP_UPDATE")
         xpframe:RegisterEvent("PLAYER_ENTERING_WORLD")
-        xpframe:HookScript("OnEvent", updateXP)
+        xpframe:HookScript("OnEvent", function(self)
+            self.text:SetText(math.floor((UnitXP("player")*100)/UnitXPMax("player")) .. "%")
+        end)
     end 
 end
 
