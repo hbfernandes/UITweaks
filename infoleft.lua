@@ -1,40 +1,31 @@
---- Info frames ---
+--- Left side info ---
 
 local addon, ns = ...
-
--- Frames
-local infoFrame = CreateFrame("Frame")
-infoFrame:SetWidth(100)
-infoFrame:SetHeight(16)
-infoFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
+local infoFrame = ns.infoFrame
 
 -- Repair
 infoFrame.repairIcon = infoFrame:CreateTexture(nil, "ARTWORK")
 infoFrame.repairIcon:SetTexture("Interface\\Minimap\\TRACKING\\Repair")
-infoFrame.repairIcon:SetPoint("LEFT", infoFrame, "LEFT", 0, 0)
+infoFrame.repairIcon:SetPoint("LEFT", infoFrame, "LEFT", 2, 0)
 infoFrame.repairIcon:SetHeight(infoFrame:GetHeight())
-infoFrame.repairIcon:SetWidth(16)
+infoFrame.repairIcon:SetWidth(infoFrame:GetHeight())
 
-infoFrame.repairText = infoFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-infoFrame.repairText:SetFont("FONTS\\FRIZQT__.TTF", 9, "NORMAL")
+infoFrame.repairText = infoFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 infoFrame.repairText:SetJustifyH("LEFT")
 infoFrame.repairText:SetPoint("LEFT", infoFrame.repairIcon, "RIGHT", 0, 0)
 infoFrame.repairText:SetHeight(infoFrame:GetHeight())
-infoFrame.repairText:SetWidth(28)
 
 -- Equipment Set
 infoFrame.gearIcon = infoFrame:CreateTexture(nil, "ARTWORK")
 infoFrame.gearIcon:SetTexCoord(0.05, 0.95, 0.05, 0.95);
-infoFrame.gearIcon:SetPoint("LEFT", infoFrame.repairText, "RIGHT", 0, 0)
+infoFrame.gearIcon:SetPoint("LEFT", infoFrame.repairText, "RIGHT", 6, 0)
 infoFrame.gearIcon:SetHeight(infoFrame:GetHeight() - 3)
-infoFrame.gearIcon:SetWidth(16)
+infoFrame.gearIcon:SetWidth(infoFrame:GetHeight())
 
-infoFrame.gearText = infoFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-infoFrame.gearText:SetFont("FONTS\\FRIZQT__.TTF", 9, "NORMAL")
+infoFrame.gearText = infoFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 infoFrame.gearText:SetJustifyH("LEFT")
 infoFrame.gearText:SetPoint("LEFT", infoFrame.gearIcon, "RIGHT", 3, 0)
 infoFrame.gearText:SetHeight(infoFrame:GetHeight())
-infoFrame.gearText:SetWidth(100)
 
 
 --- Functions
@@ -54,7 +45,7 @@ local function updateDurability(info)
         end
 
     end
-    info.repairText:SetText(math.floor(lowestPercent).."%")
+    ns:infoFrameSetText(info.repairText, math.floor(lowestPercent).."%")
 end
 
 local function updateGearSet(info, setID)
@@ -64,7 +55,7 @@ local function updateGearSet(info, setID)
         local name, iconFileID, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetIDs[i])
         if isEquipped then
             info.gearIcon:SetTexture(iconFileID)
-            info.gearText:SetText(name)
+            ns:infoFrameSetText(info.gearText, name)
             
             hasEquipped = true
             break
@@ -74,7 +65,7 @@ local function updateGearSet(info, setID)
 
     if not hasEquipped then
         info.gearIcon:SetTexture("134400")
-        info.gearText:SetText("No set equipped")
+        ns:infoFrameSetText(info.gearText, "No set equipped")
     end
     
     info.updating = false    
@@ -82,12 +73,14 @@ end
 
 --- Events
 
-local function infoFrame_OnEvent(self, event, ...)
+local function left_OnEvent(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         updateGearSet(self)
     elseif event == "UPDATE_INVENTORY_DURABILITY" then
         updateDurability(self)
-    elseif event == "EQUIPMENT_SETS_CHANGED" or event == "PLAYER_EQUIPMENT_CHANGED" or event == "EQUIPMENT_SWAP_FINISHED" then
+    elseif (event == "EQUIPMENT_SETS_CHANGED" or 
+            event == "PLAYER_EQUIPMENT_CHANGED" or 
+            event == "EQUIPMENT_SWAP_FINISHED") then
         if not self.updating then
             self.updating = true
             ns:wait(1, updateGearSet, self)
@@ -102,4 +95,4 @@ infoFrame:RegisterEvent("EQUIPMENT_SWAP_FINISHED")
 infoFrame:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 infoFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 infoFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-infoFrame:HookScript("OnEvent", infoFrame_OnEvent)
+infoFrame:HookScript("OnEvent", left_OnEvent)

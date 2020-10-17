@@ -1,80 +1,59 @@
---- Info frames ---
+--- Right side info ---
 
 local addon, ns = ...
-
--- Frames
-
-local infoFrame = CreateFrame("Frame")
-infoFrame:SetWidth(100)
-infoFrame:SetHeight(16)
-infoFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", 0, 0)
+local infoFrame = ns.infoFrame
 
 -- fps
-infoFrame.fpsText = infoFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-infoFrame.fpsText:SetFont("FONTS\\FRIZQT__.TTF", 9, "NORMAL")
+infoFrame.fpsText = infoFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 infoFrame.fpsText:SetJustifyH("LEFT")
-infoFrame.fpsText:SetPoint("RIGHT", infoFrame, "RIGHT", 0, 0)
+infoFrame.fpsText:SetPoint("RIGHT", infoFrame, "RIGHT", 5, 0)
 infoFrame.fpsText:SetHeight(infoFrame:GetHeight())
-infoFrame.fpsText:SetWidth(30)
 
 infoFrame.fpsIcon = infoFrame:CreateTexture(nil, "ARTWORK")
 infoFrame.fpsIcon:SetTexture("Interface\\Addons\\"..addon.."\\media\\fps_blue.png")
 infoFrame.fpsIcon:SetPoint("RIGHT", infoFrame.fpsText, "LEFT", -1, 0)
 infoFrame.fpsIcon:SetHeight(infoFrame:GetHeight() - 4)
-infoFrame.fpsIcon:SetWidth(16)
+infoFrame.fpsIcon:SetWidth(infoFrame:GetHeight())
 
 -- latency
-infoFrame.latencyText = infoFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-infoFrame.latencyText:SetFont("FONTS\\FRIZQT__.TTF", 9, "NORMAL")
+infoFrame.latencyText = infoFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 infoFrame.latencyText:SetJustifyH("LEFT")
-infoFrame.latencyText:SetPoint("RIGHT", infoFrame.fpsIcon, "LEFT", -2, 0)
+infoFrame.latencyText:SetPoint("RIGHT", infoFrame.fpsIcon, "LEFT", -8, 0)
 infoFrame.latencyText:SetHeight(infoFrame:GetHeight())
-infoFrame.latencyText:SetWidth(34)
 
 infoFrame.latencyIcon = infoFrame:CreateTexture(nil, "ARTWORK")
 infoFrame.latencyIcon:SetTexture("Interface\\Addons\\"..addon.."\\media\\latency")
 infoFrame.latencyIcon:SetPoint("RIGHT", infoFrame.latencyText, "LEFT", -1, 0)
 infoFrame.latencyIcon:SetHeight(infoFrame:GetHeight() - 4)
-infoFrame.latencyIcon:SetWidth(16)
+infoFrame.latencyIcon:SetWidth(infoFrame:GetHeight())
 
 
 --- Functions
 
 local function updateFps(info)
-    info.fpsText:SetText(math.floor(GetFramerate()).."fps")
+    ns:infoFrameSetText(info.fpsText, math.floor(GetFramerate()).."fps")
 end
 
 local function updateLatency(info)
     local _, _, latencyHome, latencyWorld = GetNetStats()
-    -- info.latencyText:SetText(latencyHome.."ms/"..latencyWorld.."ms")
     if latencyWorld > 999 then
-        latencyWorld = ">"..math.floor(latencyWorld/1000).."k"
+        latencyWorld = math.floor(latencyWorld/1000).."k+"
     end
 
-    info.latencyText:SetText(latencyWorld.."ms")
+    ns:infoFrameSetText(info.latencyText, latencyWorld.."ms")
 end
 
 --- Events
 
-local function infoFrame_OnEvent(self, event, ...)
+local function right_OnEvent(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         updateFps(self)
         updateLatency(self)
     end
 end
 
-local function centerInfo_OnEvent(self, event, ...)
-    local zone, subzone = GetZoneText(), GetSubZoneText()
-    if zone == subzone or subzone == "" then
-        self.zoneText:SetText(zone)
-    else
-        self.zoneText:SetText(zone..": "..subzone)
-    end
-end
-
-
 infoFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-infoFrame:HookScript("OnEvent", infoFrame_OnEvent)
+infoFrame:HookScript("OnEvent", right_OnEvent)
 infoFrame:HookScript("OnUpdate", function(self, elapsed)
     self.latencyLastUpdate = (self.latencyLastUpdate or 0) + elapsed
     self.fpsLastUpdate = (self.fpsLastUpdate or 0) + elapsed

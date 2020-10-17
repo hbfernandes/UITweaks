@@ -3,6 +3,9 @@ local addon, ns = ...
 local waitTable = {}
 local waitFrame = nil
 
+
+-- Global Functions
+
 function ns:wait(delay, func, ...)
   if type(delay) ~= "number" or type(func) ~= "function" then
     return false
@@ -32,4 +35,14 @@ function ns:wait(delay, func, ...)
   return true
 end
 
+function ns:infoFrameSetText(frame, text)
+    frame:SetText(text)
+    frame:SetWidth(string.len(text) * 8)
+end
 
+-- Global Frames
+
+ns.infoFrame = CreateFrame("Frame", nil, UIParent)
+ns.infoFrame:SetPoint("TOP", UIParent, "TOP", 0, 0)
+ns.infoFrame:SetWidth(UIParent:GetWidth())
+ns.infoFrame:SetHeight(18)
