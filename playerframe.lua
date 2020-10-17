@@ -32,6 +32,7 @@ if PlayerFrame then
     markFrame.texture:SetAllPoints(markFrame)
 
     markFrame:RegisterEvent("RAID_TARGET_UPDATE")  
+    markFrame:RegisterEvent("PLAYER_ENTERING_WORLD")  
     markFrame:HookScript("OnEvent", updatePlayerMarker)
 
     -- Display XP percentage on playerframe
@@ -55,5 +56,5 @@ end
 
 if MageArcaneChargesFrame then
     MageArcaneChargesFrame:Hide()
-    MageArcaneChargesFrame:HookScript("OnShow",function(self) self:Hide() end)
+    MageArcaneChargesFrame:HookScript("OnShow", function(self) self:Hide() end)
 end

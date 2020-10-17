@@ -3,6 +3,9 @@ local addon, ns = ...
 local waitTable = {}
 local waitFrame = nil
 
+-- Global Vars
+
+ns.class = UnitClassBase("player")
 
 -- Global Functions
 

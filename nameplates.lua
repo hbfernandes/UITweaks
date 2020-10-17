@@ -1,3 +1,5 @@
+local addon, ns = ...
+
 -- Nameplate font sizes
 -- https://www.townlong-yak.com/framexml/live/SharedFontStyles.xml
 -- https://www.townlong-yak.com/framexml/live/FontStyles.xml
@@ -6,23 +8,15 @@ SystemFont_LargeNamePlateFixed:SetFontObject(GameFontNormalMed1)
 -- Display health percentage on healthbar
 
 local function createPercentHPFrame(nameplate)
-    if nameplate:IsForbidden() or nameplate.healthPercent then
-        return
-    end
+    if nameplate:IsForbidden() or nameplate.hpPercent then return end
     
-    nameplate.healthPercent = CreateFrame("Frame", nil, nameplate)
-    nameplate.healthPercent:SetAllPoints(nameplate.healthBar)
-    nameplate.healthPercent:SetFrameStrata("HIGH")
-
-    nameplate.healthPercent.text = nameplate.healthPercent:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
-    nameplate.healthPercent.text:SetAllPoints(true)    
+    nameplate.hpPercent = nameplate.healthBar:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
+    nameplate.hpPercent:SetAllPoints(true)    
 end
 
 local function updateHPPercent(nameplate)
-    if (nameplate.healthPercent) then
-        -- update a percentage value for health.
-        local healthPercentage = ceil((UnitHealth(nameplate.displayedUnit) / UnitHealthMax(nameplate.displayedUnit) * 100))
-        nameplate.healthPercent.text:SetText(healthPercentage .. "%")
+    if nameplate.hpPercent then
+        nameplate.hpPercent:SetText(ceil((UnitHealth(nameplate.displayedUnit) / UnitHealthMax(nameplate.displayedUnit) * 100)).."%")
     end
 end
 
@@ -51,9 +45,7 @@ local function createBuffFrame(nameplate, index)
 end
 
 local function updateDispellableFramePosition(nameplate)
-    if not nameplate.dispellable then
-        return
-    end
+    if not nameplate.dispellable then return end
     
     if nameplate.name:IsShown() then
         nameplate.dispellable:SetPoint("BOTTOMRIGHT", nameplate.healthBar, "TOPRIGHT", 3, 24)
@@ -63,9 +55,7 @@ local function updateDispellableFramePosition(nameplate)
 end
 
 local function updateDispellableBuffs(nameplate)
-    if not nameplate.dispellable then
-        return
-    end
+    if not nameplate.dispellable then return end
 
     local reaction = UnitReaction("player", nameplate.displayedUnit)  -- 4 is neutral, less more hostile
     if not reaction or reaction > 4 then
@@ -79,12 +69,12 @@ local function updateDispellableBuffs(nameplate)
     -- Check the new AuraUtil.ForEachAura comin in shadowlands
 
     while shownBuffsIndex <= maxShownBuffs do
-        name, icon, count, buffType, duration, expirationTime, _, stealable = UnitDebuff(nameplate.displayedUnit, index, nil)
-        -- name, icon, count, buffType, duration, expirationTime, _, stealable = UnitBuff(nameplate.displayedUnit, index, nil)
+        -- name, icon, count, buffType, duration, expirationTime, _, stealable = UnitDebuff(nameplate.displayedUnit, index, nil)
+        name, icon, count, buffType, duration, expirationTime, _, stealable = UnitBuff(nameplate.displayedUnit, index, nil)
         
         if name then
             -- print(name, buffType, stealable)
-            if buffType == "Magic" or stealable then                                    
+            if buffType == "Magic" or (stealable and ns.class == "MAGE") then                                    
                 buffFrame = nameplate.dispellable.buffs[shownBuffsIndex]
                 if not buffFrame then
                     buffFrame = createBuffFrame(nameplate, shownBuffsIndex)                    
@@ -108,7 +98,7 @@ local function updateDispellableBuffs(nameplate)
 
                     -- Stealable
                     -- stealable = true
-                    if stealable then
+                    if stealable and ns.class == "MAGE" then
                         buffFrame.Stealable:Show()
                     else
                         buffFrame.Stealable:Hide()
@@ -138,9 +128,7 @@ local function updateDispellableBuffs(nameplate)
 end
 
 local function createDispellableFrame(nameplate)
-    if nameplate:IsForbidden() or nameplate.dispellable then
-        return
-    end
+    if nameplate:IsForbidden() or nameplate.dispellable then return end
 
     -- print("Creating for", nameplate:GetName())
 
