@@ -1,0 +1,19 @@
+## Interface: 90001
+## Title: Phenix UI Tweaks
+## Author: Hilario Fernandes
+## Version: 0.1
+
+config.lua
+global.lua
+infoleft.lua
+infomid.lua
+inforight.lua
+chat.lua
+nameplates.lua
+minimap.lua
+buffs.lua
+tooltip.lua
+bossframes.lua
+playerframe.lua
+targetframe.lua
+otherframes.lua
