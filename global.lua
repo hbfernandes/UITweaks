@@ -44,8 +44,11 @@ function ns:infoFrameSetText(frame, text)
 end
 
 -- Global Frames
+-- https://www.townlong-yak.com/framexml/live/Backdrop.lua
+
 
 ns.infoFrame = CreateFrame("Frame", nil, UIParent)
 ns.infoFrame:SetPoint("TOP", UIParent, "TOP", 0, 0)
+ns.infoFrame:SetFrameStrata("LOW")
 ns.infoFrame:SetWidth(UIParent:GetWidth())
 ns.infoFrame:SetHeight(18)

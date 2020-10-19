@@ -8,6 +8,7 @@ global.lua
 infoleft.lua
 infomid.lua
 inforight.lua
+background.lua
 chat.lua
 nameplates.lua
 minimap.lua

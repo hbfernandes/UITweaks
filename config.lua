@@ -1,15 +1,20 @@
+local addon, ns = ...
+
+ns.backgrounds = false
+
+
 -------------------------------------------
 -- Personal CVAR and other config tweaks --
 -------------------------------------------
 
 -- nameplate settings
-SetCVar("NamePlateVerticalScale", 2.7) -- use large nameplates
+SetCVar("NamePlateVerticalScale", 2.7)      -- use large nameplates
 
 SetCVar("nameplateMotion", 1)               -- default 0 (overlapping)
 SetCVar("nameplateOverlapV", 0.6)           -- default 1.1
 SetCVar("nameplateSelectedScale", 1)        -- default 1.2
 SetCVar("nameplateMinScale", 1)             -- default 0.8
-SetCVar("nameplateOtherTopInset", 0.08)     -- default 0.08
+SetCVar("nameplateOtherTopInset", 0.06)     -- default 0.08
 SetCVar("nameplateOtherBottomInset", 0)     -- default 0.1
 SetCVar("showTargetCastbar", 1)             -- default 1
 SetCVar("nameplateMinAlpha", 0.8)           -- default 0.6
@@ -34,3 +39,5 @@ SetInsertItemsLeftToRight(true)
 SetSortBagsRightToLeft(true)
 
 SetCVar("chatMouseScroll", 1)
+SetCVar("chatStyle", "classic")
+SetCVar("whisperMode", "inline")
