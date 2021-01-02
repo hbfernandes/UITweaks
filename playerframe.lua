@@ -58,3 +58,14 @@ if MageArcaneChargesFrame then
     MageArcaneChargesFrame:Hide()
     MageArcaneChargesFrame:HookScript("OnShow", function(self) self:Hide() end)
 end
+
+if RuneFrame then
+    RuneFrame:ClearAllPoints()
+    RuneFrame:SetPoint("CENTER", UIParent, "CENTER", 6, -130)
+
+    -- remove mouseover tooltip
+    for i = 1, 6 do
+        RuneFrame["Rune"..i]:SetScript("OnEnter", function() end)
+        RuneFrame["Rune"..i]:SetScript("OnLeave", function() end)
+    end
+end

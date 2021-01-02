@@ -43,6 +43,17 @@ function ns:infoFrameSetText(frame, text)
     frame:SetWidth(string.len(text) * 8)
 end
 
+
+function ns:tanking()
+	local assignedRole = UnitGroupRolesAssigned("player")
+	if ( assignedRole == "NONE" ) then
+		local spec = GetSpecialization()
+		return spec and GetSpecializationRole(spec) == "TANK"
+	end
+
+	return assignedRole == "TANK"
+end
+
 -- Global Frames
 -- https://www.townlong-yak.com/framexml/live/Backdrop.lua
 

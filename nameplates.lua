@@ -4,6 +4,7 @@ local addon, ns = ...
 -- https://www.townlong-yak.com/framexml/live/SharedFontStyles.xml
 -- https://www.townlong-yak.com/framexml/live/FontStyles.xml
 SystemFont_LargeNamePlateFixed:SetFontObject(GameFontNormalMed1)
+ChatBubbleFont:SetFontObject(GameFontNormalOutline)
 
 -- Display health percentage on healthbar
 
@@ -29,15 +30,9 @@ local buffHeight = 15
 
 local function createBuffFrame(nameplate, index)
     local buffFrame = CreateFrame("Frame", nil, nameplate, "NameplateBuffButtonTemplate")
-   
-    -- Steal highlight
-    local buffStealHighlight = buffFrame:CreateTexture(nil, "ARTWORK")
-    buffStealHighlight:SetAllPoints(buffFrame)
-    buffStealHighlight:SetBlendMode("ADD")
-    buffStealHighlight:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
-    buffFrame.Stealable = buffStealHighlight
 
     buffFrame:SetShown(false)
+    buffFrame:SetID(index)
     buffFrame:SetPoint("BOTTOMRIGHT", nameplate.dispellable, "BOTTOMLEFT", 0 - buffWidth * (index - 1), 0)
 
     tinsert(nameplate.dispellable.buffs, buffFrame)
@@ -99,11 +94,10 @@ local function updateDispellableBuffs(nameplate)
                     -- Stealable
                     -- stealable = true
                     if stealable and ns.class == "MAGE" then
-                        buffFrame.Stealable:Show()
+                        ActionButton_ShowOverlayGlow(buffFrame)
                     else
-                        buffFrame.Stealable:Hide()
+                        ActionButton_HideOverlayGlow(buffFrame)
                     end
-            
                     buffFrame:Show()
                     shownBuffsIndex = shownBuffsIndex + 1
                 end
@@ -139,11 +133,62 @@ local function createDispellableFrame(nameplate)
     nameplate.dispellable.buffs = {}
 end
 
+
+-- Aggro indicator on nameplate
+
+local function updateAggroIndicator(nameplate)
+    if not nameplate.aggro then return end
+    
+    local status = UnitThreatSituation("player", nameplate.displayedUnit)
+    if not status or not IsInGroup() then 
+        nameplate.aggro:Hide()    
+        return 
+    end
+        
+    -- print(nameplate.displayedUnit, status)
+    if status > 0  then
+        if ns:tanking() then
+            nameplate.aggro:Hide()    
+        else
+            nameplate.aggro:Show()
+        end
+    else
+        if ns:tanking() then
+            nameplate.aggro:Show()
+        else
+            nameplate.aggro:Hide()    
+        end
+    end
+end
+
+local function createAggroFrame(nameplate)
+    if nameplate:IsForbidden() or nameplate.aggro then return end
+    
+    nameplate.aggro = CreateFrame("Frame", nil, nameplate)
+    nameplate.aggro:SetWidth(22)
+    nameplate.aggro:SetHeight(22)
+    nameplate.aggro:SetPoint("LEFT", nameplate, "RIGHT", -7, 0) -- 2 if other icons
+    
+    nameplate.aggro.texture = nameplate.aggro:CreateTexture(nil, "OVERLAY")
+    nameplate.aggro.texture:SetAllPoints(nameplate.aggro)
+    -- nameplate.aggro.texture:SetTexture("137008")    
+    nameplate.aggro.texture:SetTexture("Interface/GossipFrame/AvailableQuestIcon")
+    nameplate.aggro.texture:SetVertexColor(1, 0, 0)    
+    
+    -- if ns:tanking() then 
+    --     nameplate.aggro.texture:SetTexture("895885")    
+    -- else
+    --     nameplate.aggro.texture:SetTexture("1357795")    
+    -- end
+end
+
+
 -- Hook it up
 
 if DefaultCompactNamePlateFrameSetupInternal then
     hooksecurefunc("DefaultCompactNamePlateFrameSetupInternal", createPercentHPFrame)
     hooksecurefunc("DefaultCompactNamePlateFrameSetupInternal", createDispellableFrame)
+    hooksecurefunc("DefaultCompactNamePlateFrameSetupInternal", createAggroFrame)
 else
     print("Missing 'DefaultCompactNamePlateFrameSetupInternal' to hook on!")
 end
@@ -165,3 +210,10 @@ if CompactUnitFrame_UpdateName then
 else
     print("Missing 'CompactUnitFrame_UpdateName' to hook on!")
 end
+
+if CompactUnitFrame_UpdateAggroFlash then
+    hooksecurefunc("CompactUnitFrame_UpdateAggroFlash", updateAggroIndicator)
+else
+    print("Missing 'CompactUnitFrame_UpdateAggroFlash' to hook on!")
+end
+
