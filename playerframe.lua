@@ -1,13 +1,6 @@
 -- https://github.com/tomrus88/BlizzardInterfaceCode/blob/master/Interface/FrameXML/PlayerFrame.lua
 
 if PlayerFrame then
-    -- Set position
-    if not TargetFrame:IsUserPlaced() then
-        PlayerFrame:ClearAllPoints()
-        PlayerFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 405, -582)
-        PlayerFrame:SetUserPlaced(true)
-    end
-
     -- Stop showing heals/dmg on player frame
     PlayerFrame:UnregisterEvent("UNIT_COMBAT")
 
@@ -26,7 +19,7 @@ if PlayerFrame then
     markFrame:SetFrameStrata("MEDIUM") -- PlayerFrame is LOW, set MEDIUM to display above
     markFrame:SetWidth(40)
     markFrame:SetHeight(40)
-    markFrame:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 55, 5)
+    markFrame:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 35, -5)
 
     markFrame.texture = markFrame:CreateTexture(nil, "OVERLAY")
     markFrame.texture:SetAllPoints(markFrame)
@@ -40,7 +33,7 @@ if PlayerFrame then
         local xpframe = CreateFrame("Frame", nil, PlayerFrame)
         xpframe:SetWidth(40)
         xpframe:SetHeight(40)
-        xpframe:SetPoint("RIGHT", PlayerFrame, "BOTTOMLEFT", 49, 33)
+        xpframe:SetPoint("RIGHT", PlayerFrame, "BOTTOMLEFT", 40, 33)
 
         xpframe.text = xpframe:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
         xpframe.text:SetAllPoints(true)

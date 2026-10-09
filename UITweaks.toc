@@ -3,18 +3,16 @@
 ## Author: Hilario Fernandes
 ## Version: 0.1
 
-config.lua
+#config.lua
 global.lua
-infoleft.lua
-infomid.lua
+#infoleft.lua
+#infomid.lua
 inforight.lua
-background.lua
-chat.lua
+#background.lua
+#chat.lua
 nameplates.lua
-minimap.lua
-buffs.lua
 tooltip.lua
-bossframes.lua
+#bossframes.lua
 playerframe.lua
 targetframe.lua
 otherframes.lua

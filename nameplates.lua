@@ -3,8 +3,7 @@ local addon, ns = ...
 -- Nameplate font sizes
 -- https://www.townlong-yak.com/framexml/live/SharedFontStyles.xml
 -- https://www.townlong-yak.com/framexml/live/FontStyles.xml
-SystemFont_LargeNamePlateFixed:SetFontObject(GameFontNormalMed1)
-ChatBubbleFont:SetFontObject(GameFontNormalOutline)
+SystemFont_LargeNamePlate:SetFontObject(GameFontNormalTiny)
 
 -- Display health percentage on healthbar
 
@@ -17,7 +16,10 @@ end
 
 local function updateHPPercent(nameplate)
     if nameplate.hpPercent then
-        nameplate.hpPercent:SetText(ceil((UnitHealth(nameplate.displayedUnit) / UnitHealthMax(nameplate.displayedUnit) * 100)).."%")
+        local hpValue = UnitHealth(nameplate.displayedUnit)
+        local hpMax = UnitHealthMax(nameplate.displayedUnit)
+        -- nameplate.hpPercent:SetText(format("%.1f", ceil((hpValue/hpMax) * 1000) / 10) .. "%")
+        nameplate.hpPercent:SetText(ceil((hpValue/hpMax) * 1000) / 10 .. "%")
     end
 end
 
@@ -29,7 +31,7 @@ local buffWidth = 20
 local buffHeight = 15
 
 local function createBuffFrame(nameplate, index)
-    local buffFrame = CreateFrame("Frame", nil, nameplate, "NameplateBuffButtonTemplate")
+    local buffFrame = CreateFrame("Frame", "NameplateBuffFrame"..index, nameplate, "NameplateBuffButtonTemplate")
 
     buffFrame:SetShown(false)
     buffFrame:SetID(index)
@@ -61,54 +63,101 @@ local function updateDispellableBuffs(nameplate)
     local shownBuffsIndex = 1
     local index = 1
     
-    -- Check the new AuraUtil.ForEachAura comin in shadowlands
-
-    while shownBuffsIndex <= maxShownBuffs do
-        -- name, icon, count, buffType, duration, expirationTime, _, stealable = UnitDebuff(nameplate.displayedUnit, index, nil)
-        name, icon, count, buffType, duration, expirationTime, _, stealable = UnitBuff(nameplate.displayedUnit, index, nil)
-        
-        if name then
-            -- print(name, buffType, stealable)
-            if buffType == "Magic" or (stealable and ns.class == "MAGE") then                                    
-                buffFrame = nameplate.dispellable.buffs[shownBuffsIndex]
-                if not buffFrame then
-                    buffFrame = createBuffFrame(nameplate, shownBuffsIndex)                    
-                end
-
-                if ( icon ) then
-                    -- set the icon
-                    buffFrame.Icon:SetTexture(icon)
-
-                    -- set the count
-                    -- count=3
-                    if ( count > 1 ) then
-                        buffFrame.CountFrame.Count:SetText(count)
-                        buffFrame.CountFrame.Count:Show()
-                    else
-                        buffFrame.CountFrame.Count:Hide()
-                    end
-
-                    -- Handle cooldowns
-                    CooldownFrame_Set(buffFrame.Cooldown, expirationTime - duration, duration, duration > 0, true)
-
-                    -- Stealable
-                    -- stealable = true
-                    if stealable and ns.class == "MAGE" then
-                        ActionButton_ShowOverlayGlow(buffFrame)
-                    else
-                        ActionButton_HideOverlayGlow(buffFrame)
-                    end
-                    buffFrame:Show()
-                    shownBuffsIndex = shownBuffsIndex + 1
-                end
-            end
-        else
-            -- stop
-            break
+    
+    local function processAura(aura)
+        if shownBuffsIndex > maxShownBuffs then
+            return
         end
 
-        index = index + 1
+        --print(aura.name, aura.icon, aura.auraInstanceID, aura.dispelName)
+        if aura.dispelName == "Magic" or (aura.isStealable and ns.class == "MAGE") then     
+            buffFrame = nameplate.dispellable.buffs[shownBuffsIndex]
+            if not buffFrame then
+                buffFrame = createBuffFrame(nameplate, shownBuffsIndex)                    
+            end
+
+            buffFrame.isBuff = aura.isHelpful
+            buffFrame.spellID = aura.spellID
+            buffFrame.auraInstanceID = aura.auraInstanceID
+            buffFrame.Icon:SetTexture(aura.icon)
+
+            -- set the count
+            -- count=3
+            if ( aura.applications > 1 ) then
+                buffFrame.CountFrame.Count:SetText(aura.applications)
+                buffFrame.CountFrame.Count:Show()
+            else
+                buffFrame.CountFrame.Count:Hide()
+            end
+
+            -- Handle cooldowns
+            CooldownFrame_Set(buffFrame.Cooldown, aura.expirationTime - aura.duration, aura.duration, aura.duration > 0, true)
+
+            -- Stealable
+            -- stealable = true
+            if aura.isStealable and ns.class == "MAGE" then
+                ActionButton_ShowOverlayGlow(buffFrame)
+            else
+                ActionButton_HideOverlayGlow(buffFrame)
+            end
+            buffFrame:Show()
+            shownBuffsIndex = shownBuffsIndex + 1
+        end
     end
+
+    --AuraUtil.ForEachAura(nameplate.displayedUnit, "HARMFUL", maxShownBuffs, processAura, true)
+    AuraUtil.ForEachAura(nameplate.displayedUnit, "HELPFUL", maxShownBuffs, processAura, true)
+
+    -- while shownBuffsIndex <= maxShownBuffs do
+    --     name, icon, count, buffType, duration, expirationTime, _, stealable, _, spellID = UnitDebuff(nameplate.displayedUnit, index, nil)
+    --     -- name, icon, count, buffType, duration, expirationTime, _, stealable, _, spellID = UnitBuff(nameplate.displayedUnit, index, nil)
+        
+    --     if name then
+    --         -- print(name, buffType, stealable)
+    --         if buffType == "Magic" or (stealable and ns.class == "MAGE") then                                    
+    --             buffFrame = nameplate.dispellable.buffs[shownBuffsIndex]
+    --             if not buffFrame then
+    --                 buffFrame = createBuffFrame(nameplate, shownBuffsIndex)                    
+    --             end
+
+    --             buffFrame.spellID = spellID
+    --             -- aura = C_UnitAuras.GetAuraDataBySlot(nameplate.displayedUnit, index)
+    --             -- buffFrame.auraInstanceID = aura.auraInstanceID
+
+    --             if ( icon ) then
+    --                 -- set the icon
+    --                 buffFrame.Icon:SetTexture(icon)
+
+    --                 -- set the count
+    --                 -- count=3
+    --                 if ( count > 1 ) then
+    --                     buffFrame.CountFrame.Count:SetText(count)
+    --                     buffFrame.CountFrame.Count:Show()
+    --                 else
+    --                     buffFrame.CountFrame.Count:Hide()
+    --                 end
+
+    --                 -- Handle cooldowns
+    --                 CooldownFrame_Set(buffFrame.Cooldown, expirationTime - duration, duration, duration > 0, true)
+
+    --                 -- Stealable
+    --                 -- stealable = true
+    --                 if stealable and ns.class == "MAGE" then
+    --                     ActionButton_ShowOverlayGlow(buffFrame)
+    --                 else
+    --                     ActionButton_HideOverlayGlow(buffFrame)
+    --                 end
+    --                 buffFrame:Show()
+    --                 shownBuffsIndex = shownBuffsIndex + 1
+    --             end
+    --         end
+    --     else
+    --         -- stop
+    --         break
+    --     end
+
+    --     index = index + 1
+    -- end
 
     -- Hide unused frames
     for i = shownBuffsIndex, maxShownBuffs do
@@ -146,7 +195,7 @@ local function updateAggroIndicator(nameplate)
     end
         
     -- print(nameplate.displayedUnit, status)
-    if status > 0  then
+    if status > 1  then
         if ns:tanking() then
             nameplate.aggro:Hide()    
         else

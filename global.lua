@@ -40,7 +40,7 @@ end
 
 function ns:infoFrameSetText(frame, text)
     frame:SetText(text)
-    frame:SetWidth(string.len(text) * 8)
+    -- frame:SetWidth(string.len(text) * 8)
 end
 
 

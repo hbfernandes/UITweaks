@@ -6,7 +6,7 @@ while _G["ChatFrame"..i] do
     -- make it fully movable and resizeable
     chatframe = _G["ChatFrame"..i]
     chatframe:SetClampRectInsets(0, 0, 0, 0)
-    chatframe:SetMinResize(100, 100)
+    --chatframe:SetMinResize(100, 100)
     
     -- hide button frame
     buttonFrame = _G["ChatFrame"..i.."ButtonFrame"]
